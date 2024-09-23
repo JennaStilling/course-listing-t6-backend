@@ -37,4 +37,4 @@ localhost:3000/course/courses/
 
 Depending on which request, you will add the other half of the directory and the required value that comes after the ":" (Without including the colon).
 
-Posts and updates require adding the JSON in the body if you use postman. Choose the Body tab and select the 'raw' radio button.
+Posts and updates require adding the JSON in the body if you use postman. Choose the Body tab and select the 'raw' radio button
