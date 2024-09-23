@@ -8,10 +8,6 @@ var logger = require('morgan');
 
 var cors = require("cors");
 
-// Router to the routes !!!
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
-
 // added
 var app = express();
 
@@ -47,26 +43,19 @@ app.get("/", (req, res) => {
 });
 
 // added
-require("./routes/course.routes.js")(app);
+
+// Router to the routes !!!
+var coursesRouter = require('./routes/course.routes');
 
 // Telling the app to use those routes declared above !!!
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
 
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
-});
 
-// error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
-});
+require("./routes/course.routes")(app)
 
 module.exports = app;
+
+const PORT = process.env.PORT || 3016;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}.`);
+});
+
