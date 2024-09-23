@@ -19,7 +19,7 @@ jobs:
       - run: npm install
       - run: npm run bundle
       - name: Deploy to Server
-        uses: easingthemes/ssh-deploy@release
+        uses: easingthemes/ssh-deploy@main
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
           ARGS: "-rltgoDzvO --delete"
