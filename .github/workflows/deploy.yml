@@ -10,14 +10,14 @@ jobs:
   aws-deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           ref: dev
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v4
       - run: npm install
       - run: npm run bundle
       - name: Deploy to Server
-        uses: easingthemes/ssh-deploy@v2.1.1
+        uses: easingthemes/ssh-deploy@latest
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
           ARGS: "-rltgoDzvO --delete"
@@ -36,7 +36,7 @@ jobs:
           command: |
             cd nodeapps/2024/project2/t6
             npm install
-            sudo systemctl stop course-listing-t6-backend
-            sudo cp course-backend.service /lib/systemd/system/course-listing-t6-backend.service
+            sudo systemctl stop course-listing-backend-t6
+            sudo cp course-listing-backend-t6.service /lib/systemd/system/course-listing-backend-t6.service
             sudo systemctl daemon-reload
-            sudo systemctl start course-listing-t6-backend
+            sudo systemctl start course-listing-backend-t6
