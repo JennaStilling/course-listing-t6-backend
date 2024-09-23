@@ -1,13 +1,31 @@
+require('dotenv').config();
+
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
-var indexRouter = require('./app/routes/index');
-var usersRouter = require('./app/routes/users');
+var cors = require("cors");
 
+// added
 var app = express();
+
+// added
+// var db = require("./models/course.models.js");
+var db = require("./models");
+
+// added
+db.sequelize.sync();
+
+// added
+var corsOptions = {
+  origin: "http://localhost:8081",
+};
+
+// Added
+app.use(cors(corsOptions));
+app.options("*", cors());
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -19,23 +37,25 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
-
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
+// simple route - added
+app.get("/", (req, res) => {
+  res.json({ message: "Welcome to bezkoder application." });
 });
 
-// error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+// added
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
-});
+// Router to the routes !!!
+var coursesRouter = require('./routes/course.routes');
+
+// Telling the app to use those routes declared above !!!
+
+
+require("./routes/course.routes")(app)
 
 module.exports = app;
+
+const PORT = process.env.PORT || 3016;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}.`);
+});
+
