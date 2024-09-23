@@ -34,7 +34,7 @@ jobs:
           privateKey: ${{ secrets.SERVER_SSH_KEY }}
           debug: false
           command: |
-            cd nodeapps/project2/2024/t6
+            cd nodeapps/2024/project2/t6
             npm install
             sudo systemctl stop course-listing-backend-t6
             sudo cp course-listing-backend-t6.service /lib/systemd/system/course-listing-backend-t6.service
