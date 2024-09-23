@@ -9,8 +9,8 @@ var logger = require('morgan');
 var cors = require("cors");
 
 // Router to the routes !!!
-//var indexRouter = require('./routes/index');
-//var usersRouter = require('./routes/users');
+var indexRouter = require('./routes/index');
+var usersRouter = require('./routes/users');
 
 // added
 var app = express();
@@ -50,8 +50,8 @@ app.get("/", (req, res) => {
 require("./routes/course.routes.js")(app);
 
 // Telling the app to use those routes declared above !!!
-//app.use('/', indexRouter);
-//app.use('/users', usersRouter);
+app.use('/', indexRouter);
+app.use('/users', usersRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
