@@ -12,11 +12,20 @@ db.sequelize.sync();
 //     console.log("Drop and re-sync db.");
 // });
 
-var corsOptions = {
-  origin: "http://localhost:8081",
-};
+// var corsOptions = {
+//   origin: "http://localhost:8081",
+// };
 
-app.use(cors(corsOptions));
+// app.use(cors(corsOptions));
+
+const cor = cors({
+  origin: function (origin, callback) {
+    callback(null, true);
+  },
+  credentials: true,
+});
+app.use(cor);
+app.options("*", cor);
 
 // parse requests of content-type - application/json
 app.use(express.json());
