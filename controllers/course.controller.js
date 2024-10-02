@@ -170,9 +170,10 @@ exports.update = (req, res) => {
     var course = req.body;
     let errorMessage = validate(course);
 
-    if (errorMessage > 2) {
+    if (errorMessage.length > 2) {
         res.status(406);
         res.send(errorMessage);
+        console.log("Error Message was sent");
     } else {
         const id = req.params.id;
 
