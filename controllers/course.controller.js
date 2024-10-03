@@ -3,36 +3,76 @@ const db = require("../models");
 const Course = db.course;
 const Op = db.Sequelize.Op;
 
-// Create/save new Courses
-exports.create = (req, res) => {
-    if (!req.body.department) {
-        res.status(400).send({
-            message: "Content can not be empty!",
-        });
-        return;
+function validate(course) {
+    var errorMessage = "[";
+
+    if (course.department == null || course.department.length == 0){
+        if (errorMessage.length > 1) errorMessage += ",";
+        errorMessage += '{"attributeName":"department" , "message":"Must have department"}';
+    }
+    if (course.courseNumber == null || course.courseNumber.length == 0){
+        if (errorMessage.length > 1) errorMessage += ",";
+        errorMessage += '{"attributeName":"courseNumber" , "message":"Must have courseNumber"}';
+    }
+    if (course.level == null){
+        if (errorMessage.length > 1) errorMessage += ",";
+        errorMessage += '{"attributeName":"level" , "message":"Must have level"}';
+        // Checking to see if this catches non numbers put in level
+    } else if (Number.isNaN(parseInt(course.level))) {
+        if (errorMessage.length > 1) errorMessage += ",";
+        errorMessage += '{"attributeName":"level" , "message":"Must be an integer"}';
+    }
+    if (course.hours == null || course.hours.length == 0){
+        if (errorMessage.length > 1) errorMessage += ",";
+        errorMessage += '{"attributeName":"hours" , "message":"Must have hours"}';
+    }
+    if (course.name == null || course.name.length == 0){
+        if (errorMessage.length > 1) errorMessage += ",";
+        errorMessage += '{"attributeName":"name" , "message":"Must have name"}';
     }
 
-    // Create Course
-    const course = {
-        //id: req.body.id,
-        department: req.body.department,
-        courseNumber: req.body.courseNumber,
-        level: req.body.level,
-        hours: req.body.hours,
-        name: req.body.name,
-        description: req.body.description,
-    };
+    errorMessage += "]";
+    return errorMessage;
+}
 
-    // Save Course into the database
-    Course.create(course)
-        .then((data) => {
-            res.send(data);
-        })
-        .catch((err) => {
-            res.status(500).send({
-                message: err.message || "Some error occured while creating the Course.",
+// Create/save new Courses
+exports.create = (req, res) => {
+    var course = req.body;
+    let errorMessage = validate(course);
+
+    if(errorMessage.length > 2) {
+        res.status(406);
+        res.send(errorMessage);
+    } else {
+        if (!req.body.department) {
+            res.status(400).send({
+                message: "Content can not be empty!",
             });
-        });
+            return;
+        }
+    
+        // Create Course
+        const course = {
+            //id: req.body.id,
+            department: req.body.department,
+            courseNumber: req.body.courseNumber,
+            level: req.body.level,
+            hours: req.body.hours,
+            name: req.body.name,
+            description: req.body.description,
+        };
+    
+        // Save Course into the database
+        Course.create(course)
+            .then((data) => {
+                res.send(data);
+            })
+            .catch((err) => {
+                res.status(500).send({
+                    message: err.message || "Some error occured while creating the Course.",
+                });
+            });
+    }
 };
 
 // Retrieve All Courses from the database
@@ -127,27 +167,36 @@ exports.findByDepartment = (req, res) => {
 
 // Update the Course by the id in the request
 exports.update = (req, res) => {
-    const id = req.params.id;
+    var course = req.body;
+    let errorMessage = validate(course);
 
-    Course.update(req.body, {
-        where: { id: id },
-    })
-        .then((num) => {
-            if (num == 1) {
-                res.send({
-                    message: "User was updated successfully.",
-                });
-            } else {
-                res.send({
-                    message: `Cannot update Course with id=${id}. Maybe Course was not found or req.body is empty!`,
-                });
-            }
+    if (errorMessage.length > 2) {
+        res.status(406);
+        res.send(errorMessage);
+        console.log("Error Message was sent");
+    } else {
+        const id = req.params.id;
+
+        Course.update(req.body, {
+            where: { id: id },
         })
-        .catch((err) => {
-            res.status(500).send({
-                message: "Error updating Course with id=" + id,
+            .then((num) => {
+                if (num == 1) {
+                    res.send({
+                        message: "User was updated successfully.",
+                    });
+                } else {
+                    res.send({
+                        message: `Cannot update Course with id=${id}. Maybe Course was not found or req.body is empty!`,
+                    });
+                }
+            })
+            .catch((err) => {
+                res.status(500).send({
+                    message: "Error updating Course with id=" + id,
+                });
             });
-        });
+    }
 };
 
 // Delete a Course with the specified id in the request

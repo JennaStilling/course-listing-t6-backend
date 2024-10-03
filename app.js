@@ -19,13 +19,21 @@ var db = require("./models");
 db.sequelize.sync();
 
 // added
-var corsOptions = {
-  origin: "http://localhost:8081",
-};
+// var corsOptions = {
+//   origin: "http://localhost:8081",
+// };
 
-// Added
-app.use(cors(corsOptions));
-app.options("*", cors());
+// app.use(cors(corsOptions));
+// app.options("*", cors());
+
+const cor = cors({
+  origin: function (origin, callback) {
+    callback(null, true);
+  },
+  credentials: true,
+});
+app.use(cor);
+app.options("*", cor);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
